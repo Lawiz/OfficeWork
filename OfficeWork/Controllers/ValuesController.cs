@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Operations;
+using Microsoft.Extensions.DependencyInjection;
+using OfficeWork.Signer;
 
 namespace OfficeWork.Controllers
 {
@@ -10,10 +13,18 @@ namespace OfficeWork.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly ISigner _signer;
+        private readonly IServiceProvider _serviceProvider;
+        public ValuesController(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+            _signer = (ISigner) serviceProvider.GetService(typeof(ISigner));
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            
             return new string[] { "value1", "value2" };
         }
 
