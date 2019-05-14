@@ -12,25 +12,24 @@ namespace OfficeWork.Signer
 {
     interface ISigner
     {
-        
+        bool Verify(string text, byte[] signature);
+        byte[] Sign(string text);
     }
     public class Signer : ISigner
     {
         private readonly X509Certificate2 certificate;
         private readonly IHostingEnvironment _hostingEnvironment;
-        private RSACryptoServiceProvider _privateKey;
+        private RSA _privateKey;
         public Signer(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             var path = Path.Combine(_hostingEnvironment.ContentRootPath,@"mycert.pfx");
 
             this.certificate = new X509Certificate2(path,"1234567890");
-            this._privateKey = (RSACryptoServiceProvider) this.certificate.PrivateKey;
+            this._privateKey = this.certificate.GetRSAPrivateKey();
         }
-        public byte[] Sign(string text, string certSubject)
+        public byte[] Sign(string text)
         {
-            // Hash the data
-
             SHA1Managed sha1 = new SHA1Managed();
 
             UnicodeEncoding encoding = new UnicodeEncoding();
@@ -39,11 +38,11 @@ namespace OfficeWork.Signer
 
             byte[] hash = sha1.ComputeHash(data);
 
-            return  _privateKey.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
+            return  _privateKey.SignHash(hash, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
         }
-        public bool Verify(string text, byte[] signature, string certPath)
+        public bool Verify(string text, byte[] signature)
         {
-            RSACryptoServiceProvider csp = (RSACryptoServiceProvider)this.certificate.PublicKey.Key;
+            RSA csp = this.certificate.GetRSAPublicKey();
             // Hash the data
 
             SHA1Managed sha1 = new SHA1Managed();
@@ -57,7 +56,7 @@ namespace OfficeWork.Signer
 
             // Verify the signature with the hash
 
-            return csp.VerifyHash(hash, CryptoConfig.MapNameToOID("SHA1"), signature);
+            return csp.VerifyHash(hash, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
 
         }
     }
