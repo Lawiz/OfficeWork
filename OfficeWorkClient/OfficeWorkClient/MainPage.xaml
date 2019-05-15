@@ -5,7 +5,21 @@
              x:Class="OfficeWorkClient.MainPage">
 
     <StackLayout>
-            
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="800"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <Label Text="Entry Text" TextColor="Black" FontSize="Medium" Grid.Row="0" Grid.Column="1" />
+        <Entry x:Name="SignTextEntry"  TextColor="Black" FontSize="Medium" Grid.Row="0" Grid.Column="1" />
+        <Button x:Name="Sign" Text="Sign Text"></Button>
+
     </StackLayout>
 
 </ContentPage>
